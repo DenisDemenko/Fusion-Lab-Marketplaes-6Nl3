@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FirebaseAuthGuard } from './auth/firebase-auth.guard';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -9,7 +10,11 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [AppService],
-    }).compile();
+    })
+      // This unit tests the public root action, not Firebase authentication.
+      .overrideGuard(FirebaseAuthGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     appController = app.get<AppController>(AppController);
   });
